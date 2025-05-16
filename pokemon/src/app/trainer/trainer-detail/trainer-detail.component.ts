@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Trainer } from '../Trainer';
+import { TrainerService } from '../trainer.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-trainer-detail',
@@ -8,7 +10,24 @@ import { Trainer } from '../Trainer';
 })
 export class TrainerDetailComponent implements OnInit {
   @Input() trainerDetail!: Trainer;
-  constructor() {}
+  trainerId!: number;
 
-  ngOnInit() {}
+  constructor(private route: ActivatedRoute,
+    private trainerService: TrainerService
+  ) {}
+
+  getTrainerById() {
+    this.trainerService.getTrainerById(this.trainerId).subscribe((data) => {
+    this.trainerDetail = data;
+    })
+  }
+
+  ngOnInit() {
+    if (this.trainerDetail == undefined) {
+      this.trainerId = this.route.snapshot.paramMap.get('id')! as unknown as number;
+      if(this.trainerId){
+        this.getTrainerById();
+      }
+    }
+  }
 }
